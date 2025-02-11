@@ -8,3 +8,17 @@
 *{
   font-family: Outfit;
 }
+@keyframes marquee {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+.running-text {
+  white-space: nowrap;
+  display: inline-block;
+  animation: marquee 5s linear infinite;
+}

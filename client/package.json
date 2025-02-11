@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.22.12",
+    "framer-motion": "^12.4.2",
     "humanize-duration": "^3.32.1",
     "quill": "^2.0.3",
     "rc-progress": "^4.0.0",
