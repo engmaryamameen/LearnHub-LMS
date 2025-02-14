@@ -6,6 +6,7 @@ import { clerkWebhooks } from './controllers/webhooks.js';
 import educatorRouter from './routes/educatorRoutes.js';
 import { clerkMiddleware } from '@clerk/express';
 import connectCloudinay from './configs/cloudinary.js';
+import courseRouter from './routes/courseRoute.js';
 
 // initialize express 
 const app = express();
@@ -25,6 +26,8 @@ app.use(clerkMiddleware())
 app.get('/', (req,res)=>{res.send("Edemy API is working fine!")})
 app.post('/clerk', express.json(), clerkWebhooks)
 app.use('/api/educator', express.json(), educatorRouter);
+app.use('/api/course', express.json(), courseRouter);
+
 
 
 // port
