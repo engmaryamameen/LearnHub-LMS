@@ -29,13 +29,13 @@ export const addCourse = async(req,res) =>{
         const {courseData} = req.body;
         const imageFile = req.file;
         const educatoreId = req.auth.userId
-
+        console.log(educatoreId);
         if(!imageFile){
             res.json({success: false, message:"Thumbnail Not Attached"})
         }
 
         const parsedCourseData = await JSON.parse(courseData)
-        parsedCourseData.educatore = educatoreId
+        parsedCourseData.educator = educatoreId
         const newCourse = await Course.create(parsedCourseData)
         const imageUpload = await cloudinary.uploader.upload(imageFile.path)
         newCourse.courseThumbnail = imageUpload.secure_url
@@ -53,8 +53,10 @@ export const addCourse = async(req,res) =>{
 // 8.32 time  :  course not found in postman 
 export const getEducatorCourses = async(req,res) => {
     try {
+        // const educator = req.auth
         const educator = req.auth.userId
         const courses = await Course.find({educator})
+        console.log(req.auth);
         res.json({success: true, courses})
         
     } catch (error) {
