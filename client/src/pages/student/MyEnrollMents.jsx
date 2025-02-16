@@ -31,6 +31,8 @@ const MyEnrollMents = () => {
 						{ courseId: course._id },
 						{ headers: { Authorization: `Bearer ${token}` } }
 					);
+					console.log("dta", data.progressData);
+					
 
 					let totalLectures = calculateNoOfLectures(course);
 
