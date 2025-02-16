@@ -27,7 +27,7 @@ const AddCourse = () => {
     lectureTitle: '',
     lectureDuration:'',
     lectureUrl:'',
-    isPreviewFree:false,
+    isPreviewFree: false,
   })
 
   const handleChapter = (action, chapterId) => {
@@ -348,7 +348,8 @@ const AddCourse = () => {
                       type="checkbox"
                       className='mt-1 block w-full border rounded py-1 px-2'
                       value={lectureDetails.isPreviewFree}
-                      onChange={(e) => setLectureDetails({...lectureDetails, isPreviewFree: e.target.value})}
+                      // onClick={(e) => setLectureDetails({...lectureDetails, isPreviewFree: e.target.value})}
+                      onClick={(e) => setLectureDetails({...lectureDetails, isPreviewFree: true})}
                       />
                     </div>
 
