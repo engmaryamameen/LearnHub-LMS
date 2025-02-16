@@ -15,7 +15,8 @@ const Loading = () => {
 
       return () => clearTimeout(timer);
     }
-  }, [path, navigate]);
+  }, []);
+  // }, [path, navigate]);
 
   return (
     <div className='min-h-screen flex items-center justify-center'>
