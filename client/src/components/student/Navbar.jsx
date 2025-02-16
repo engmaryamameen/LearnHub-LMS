@@ -5,6 +5,7 @@ import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
 import { AppContext } from "../../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import Logger from "../Logger";
 
 const Navbar = () => {
 
@@ -48,6 +49,9 @@ const Navbar = () => {
 				className="w-28 lg:w-32  cursor-pointer"
 			/>
 			<div className="hidden md:flex items-center gap-5 text-gray-500">
+				<div className="flex items-center gap-5">
+					<Logger/>
+				</div>
 				<div className="flex items-center gap-5">
 					{user && (
 						<>
