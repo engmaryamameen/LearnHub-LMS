@@ -56,7 +56,7 @@ export const addCourse = async (req, res) => {
         const imageFile = req.file;
         const educatorId = req.auth.userId;
 
-        console.log(educatorId);
+        // console.log(educatorId);
 
         if (!imageFile) {
             return res.json({ success: false, message: "Thumbnail Not Attached" });
@@ -126,7 +126,7 @@ export const getEducatorCourses = async(req,res) => {
         // const educator = req.auth
         const educator = req.auth.userId
         const courses = await Course.find({educator})
-        console.log(req.auth);
+        // console.log(req.auth);
         res.json({success: true, courses})
         
     } catch (error) {
