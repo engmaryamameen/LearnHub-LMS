@@ -105,8 +105,9 @@ export const updateUserCourseProgress = async(req,res)=>{
             if(progressData.lectureCompleted.includes(lectureId)){
                 return res.json({success: true, message: "Lecture Already Completed"})
             }
-
+            
             progressData.lectureCompleted.push(lectureId)
+            progressData.completed = true
             await progressData.save()
         }
         else{
@@ -143,6 +144,10 @@ export const addUserRating = async (req,res)=>{
     try {
         const userId = req.auth.userId
         const {courseId, rating} = req.body
+        // console.log("UserId", courseId);
+        // console.log("courseId", courseId);
+        // console.log("rating", rating);
+        
 
         if(!courseId || !userId || !rating || rating < 1 || rating > 5)
         {
@@ -168,7 +173,8 @@ export const addUserRating = async (req,res)=>{
             course.courseRatings.push({userId,rating});
         }
 
-        await courseData.save()
+        // await courseData.save()
+        await course.save()
         res.json({success: true, message:"Rating Added"})
 
     } catch (error) {
