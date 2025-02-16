@@ -123,7 +123,7 @@ const AddCourse = () => {
       courseDescription: quillRef.current.root.innerHTML,
       coursePrice: Number(coursePrice),
       discount: Number(discount),
-      isPublished: false, // ✅ Fix: Include isPublished field
+      isPublished: true, // ✅ Fix: Include isPublished field
       courseContent: updatedChapters,
     };
 
