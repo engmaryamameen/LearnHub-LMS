@@ -155,10 +155,15 @@ export const AppContextProvider = (props)=>{
     },[])
 
 
+    const logToken = async ()=>{
+        console.log(await getToken());
+        
+    }
 
     useEffect(()=>{
         if(user){
             fetchUserData()
+            logToken()
             fetchUserEnrolledCourses()
         }
     },[user])
