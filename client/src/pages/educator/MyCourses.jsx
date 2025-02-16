@@ -35,7 +35,7 @@ const MyCourses = () => {
   },[isEducator])
 
   return courses ? (
-    <div className='h-screen mb-10 flex flex-col items-start justify-between md:p-8 md:pb-0 p-4 pt-8 pb-0'>
+    <div className='h-full mb-10 flex flex-col items-start justify-between md:p-8 md:pb-0 p-4 pt-8 pb-0'>
       <div className='w-full'>
         <h2 className=' pb-4 text-lg font-medium'>My Courses</h2>
         <div className='flex flex-col items-center max-w-4xl w-full overflow-hidden rounded-md bg-white border border-gray-500/20'>
