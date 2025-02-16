@@ -1,10 +1,15 @@
-import React, { act, useEffect, useRef, useState } from 'react'
+import React, { act, useContext, useEffect, useRef, useState } from 'react'
 import uniqid from 'uniqid'
 import Quill from 'quill'
 import { assets } from '../../assets/assets'
+import { toast } from 'react-toastify'
+import axios from 'axios'
+import { AppContext } from '../../context/AppContext'
 
 
 const AddCourse = () => {
+
+  const { backendUrl, getToken,} = useContext(AppContext)
 
 
   const quillRef =  useRef(null)
@@ -93,9 +98,64 @@ const AddCourse = () => {
     });
   }
 
-  const handleSubmit = async (e)=> {
-    e.preventdefault();
+ const handleSubmit = async (e) => {
+  try {
+    e.preventDefault();
+
+    if (!image) {
+      toast.error("Thumbnail Not Selected");
+      return; // Prevent further execution
+    }
+
+    if (!chapters.length) {
+      toast.error("At least one chapter is required!");
+      return;
+    }
+
+    // Ensure each chapter has a chapter order
+    const updatedChapters = chapters.map((ch, index) => ({
+      ...ch,
+      chapterorder: ch.chapterorder || index + 1, // Auto-assign order if missing
+    }));
+
+    const courseData = {
+      courseTitle,
+      courseDescription: quillRef.current.root.innerHTML,
+      coursePrice: Number(coursePrice),
+      discount: Number(discount),
+      isPublished: false, // ✅ Fix: Include isPublished field
+      courseContent: updatedChapters,
+    };
+
+    const formData = new FormData();
+    formData.append("courseData", JSON.stringify(courseData)); // ✅ Ensure courseData is sent as JSON
+    formData.append("image", image); // ✅ Ensure image is sent correctly
+
+    const token = await getToken();
+    const { data } = await axios.post(
+      backendUrl + "/api/educator/add-course",
+      formData,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    console.log("data", data);
+
+    if (data.success) {
+      toast.success(data.message);
+      setCourseTitle("");
+      setCoursePrice(0);
+      setDiscount(0);
+      setImage(null);
+      setChapters([]);
+      quillRef.current.root.innerHTML = "";
+    } else {
+      toast.error(data.message);
+    }
+  } catch (error) {
+    toast.error(error.message);
+    console.log(error.message);
   }
+};
 
   useEffect(()=>{
     // initiate Quill only once
