@@ -82,8 +82,10 @@ const AddCourse = () => {
           const newLecture = {
             ...lectureDetails,
             lectureOrder: chapter.chapterContent.length > 0 ? chapter.chapterContent.slice(-1)[0].lectureOrder + 1 : 1,
-            lectureid: uniqid()
+            lectureId: uniqid()
           };
+          // console.log("LectureId" , lectureId);
+          console.log("Lecture" , newLecture);
           chapter.chapterContent.push(newLecture);
         }
         return chapter;
@@ -98,64 +100,126 @@ const AddCourse = () => {
     });
   }
 
- const handleSubmit = async (e) => {
-  try {
-    e.preventDefault();
 
-    if (!image) {
-      toast.error("Thumbnail Not Selected");
-      return; // Prevent further execution
+  const handleSubmit = async (e) => {
+    try {
+      e.preventDefault();
+  
+      if (!image) {
+        toast.error("Thumbnail Not Selected");
+        return; // Prevent further execution
+      }
+  
+      // if (!chapters.length) {
+      //   toast.error("At least one chapter is required!");
+      //   return;
+      // }
+  
+      // // Ensure each chapter has a chapter order
+      // const updatedChapters = chapters.map((ch, index) => ({
+      //   ...ch,
+      //   chapterorder: ch.chapterorder || index + 1, // Auto-assign order if missing
+      // }));
+  
+      const courseData = {
+        courseTitle,
+        courseDescription: quillRef.current.root.innerHTML,
+        coursePrice: Number(coursePrice),
+        discount: Number(discount),
+        // isPublished: true, // ✅ Fix: Include isPublished field
+        courseContent: chapters,
+      };
+  
+      const formData = new FormData();
+      formData.append("courseData", JSON.stringify(courseData)); // ✅ Ensure courseData is sent as JSON
+      formData.append("image", image); // ✅ Ensure image is sent correctly
+  
+      const token = await getToken();
+      const { data } = await axios.post(
+        backendUrl + "/api/educator/add-course",
+        formData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+  
+      console.log("data", data);
+  
+      if (data.success) {
+        toast.success(data.message);
+        setCourseTitle("");
+        setCoursePrice(0);
+        setDiscount(0);
+        setImage(null);
+        setChapters([]);
+        quillRef.current.root.innerHTML = "";
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.message);
+      console.log(error.message);
     }
+  };
 
-    if (!chapters.length) {
-      toast.error("At least one chapter is required!");
-      return;
-    }
 
-    // Ensure each chapter has a chapter order
-    const updatedChapters = chapters.map((ch, index) => ({
-      ...ch,
-      chapterorder: ch.chapterorder || index + 1, // Auto-assign order if missing
-    }));
 
-    const courseData = {
-      courseTitle,
-      courseDescription: quillRef.current.root.innerHTML,
-      coursePrice: Number(coursePrice),
-      discount: Number(discount),
-      isPublished: true, // ✅ Fix: Include isPublished field
-      courseContent: updatedChapters,
-    };
+//  const handleSubmit = async (e) => {
+//   try {
+//     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("courseData", JSON.stringify(courseData)); // ✅ Ensure courseData is sent as JSON
-    formData.append("image", image); // ✅ Ensure image is sent correctly
+//     if (!image) {
+//       toast.error("Thumbnail Not Selected");
+//       return; // Prevent further execution
+//     }
 
-    const token = await getToken();
-    const { data } = await axios.post(
-      backendUrl + "/api/educator/add-course",
-      formData,
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
+//     if (!chapters.length) {
+//       toast.error("At least one chapter is required!");
+//       return;
+//     }
 
-    console.log("data", data);
+//     // Ensure each chapter has a chapter order
+//     const updatedChapters = chapters.map((ch, index) => ({
+//       ...ch,
+//       chapterorder: ch.chapterorder || index + 1, // Auto-assign order if missing
+//     }));
 
-    if (data.success) {
-      toast.success(data.message);
-      setCourseTitle("");
-      setCoursePrice(0);
-      setDiscount(0);
-      setImage(null);
-      setChapters([]);
-      quillRef.current.root.innerHTML = "";
-    } else {
-      toast.error(data.message);
-    }
-  } catch (error) {
-    toast.error(error.message);
-    console.log(error.message);
-  }
-};
+//     const courseData = {
+//       courseTitle,
+//       courseDescription: quillRef.current.root.innerHTML,
+//       coursePrice: Number(coursePrice),
+//       discount: Number(discount),
+//       isPublished: true, // ✅ Fix: Include isPublished field
+//       courseContent: updatedChapters,
+//     };
+
+//     const formData = new FormData();
+//     formData.append("courseData", JSON.stringify(courseData)); // ✅ Ensure courseData is sent as JSON
+//     formData.append("image", image); // ✅ Ensure image is sent correctly
+
+//     const token = await getToken();
+//     const { data } = await axios.post(
+//       backendUrl + "/api/educator/add-course",
+//       formData,
+//       { headers: { Authorization: `Bearer ${token}` } }
+//     );
+
+//     console.log("data", data);
+
+//     if (data.success) {
+//       toast.success(data.message);
+//       setCourseTitle("");
+//       setCoursePrice(0);
+//       setDiscount(0);
+//       setImage(null);
+//       setChapters([]);
+//       quillRef.current.root.innerHTML = "";
+//     } else {
+//       toast.error(data.message);
+//     }
+//   } catch (error) {
+//     toast.error(error.message);
+//     console.log(error.message);
+//   }
+// };
 
   useEffect(()=>{
     // initiate Quill only once
