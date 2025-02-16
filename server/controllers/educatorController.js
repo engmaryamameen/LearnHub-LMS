@@ -29,17 +29,17 @@ export const updateRoleToEducator = async (req,res)=>{
 //     try {
 //         const {courseData} = req.body;
 //         const imageFile = req.file;
-//         const educatoreId = req.auth.userId
+//         const educatorId = req.auth.userId
 //         console.log(educatoreId);
 //         if(!imageFile){
 //             return res.json({success: false, message:"Thumbnail Not Attached"})
 //         }
 
 //         const parsedCourseData = await JSON.parse(courseData)
-//         parsedCourseData.educator = educatoreId
-//         const newCourse = await Course.create(parsedCourseData)
+//         parsedCourseData.educator = educatorId
 //         const imageUpload = await cloudinary.uploader.upload(imageFile.path)
 //         newCourse.courseThumbnail = imageUpload.secure_url
+//         const newCourse = await Course.create(parsedCourseData)
 //         await newCourse.save()
 //         res.json({success: true, message: "Course Added"})
 
@@ -66,14 +66,14 @@ export const addCourse = async (req, res) => {
         parsedCourseData.educator = educatorId;
 
         // Ensure 'isPublished' defaults to true
-        parsedCourseData.isPublished = parsedCourseData.isPublished ?? true;
+        // parsedCourseData.isPublished = parsedCourseData.isPublished ?? true;
 
         // Ensure all lectures have required fields
-        if (!parsedCourseData.courseContent?.every(chapter => 
-            chapter.chapterContent?.every(lecture => lecture.lectureId && lecture.lectureurl)
-        )) {
-            return res.json({ success: false, message: "Lecture ID and URL are required in all chapters." });
-        }
+        // if (!parsedCourseData.courseContent?.every(chapter => 
+        //     chapter.chapterContent?.every(lecture => lecture.lectureId && lecture.lectureurl)
+        // )) {
+        //     return res.json({ success: false, message: "Lecture ID and URL are required in all chapters." });
+        // }
 
         // Upload image first
         const imageUpload = await cloudinary.uploader.upload(imageFile.path);
@@ -81,6 +81,7 @@ export const addCourse = async (req, res) => {
 
         // Create course after ensuring image is uploaded
         const newCourse = await Course.create(parsedCourseData);
+        await newCourse.save()
 
         res.json({ success: true, message: "Course Added", course: newCourse });
 
@@ -90,37 +91,10 @@ export const addCourse = async (req, res) => {
 };
 
 
-// export const addCourse = async (req, res) => {
-//     try {
-//         const { courseData } = req.body;
-//         const imageFile = req.file;
-//         const educatorId = req.auth.userId;
-        
-//         if (!imageFile) {
-//             return res.json({ success: false, message: "Thumbnail Not Attached" });
-//         }
 
-//         // ✅ Upload Image to Cloudinary FIRST
-//         const imageUpload = await cloudinary.uploader.upload(imageFile.path);
-
-//         // ✅ Parse course data AFTER uploading image
-//         const parsedCourseData = JSON.parse(courseData);
-//         parsedCourseData.educator = educatorId;
-//         parsedCourseData.courseThumbnail = imageUpload.secure_url;  // ✅ Assign image URL before saving
-
-//         // ✅ Now Save the Course with Thumbnail
-//         const newCourse = await Course.create(parsedCourseData);
-//         await newCourse.save();
-
-//         res.json({ success: true, message: "Course Added" });
-
-//     } catch (error) {
-//         res.json({ success: false, message: error.message });
-//     }
-// };
 
 // Get educator courses
-// 8.32 time  :  course not found in postman 
+
 export const getEducatorCourses = async(req,res) => {
     try {
         // const educator = req.auth
