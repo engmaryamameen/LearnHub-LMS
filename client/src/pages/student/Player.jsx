@@ -147,8 +147,12 @@ const Player = () => {
 									<ul className="list-disc md:pl-10 pl-4 pr-4 py-2 text-gray-600 border-t border-gray-300">
 										{chapter.chapterContent.map((lecture, i) => (
 											<li key={i} className="flex items-start gap-2 py-1">
-												<img
-													className="w-4 h-4 mt-1"
+												<img onClick={() =>
+																	setPlayerData({
+                                    ...lecture, chapter: index + 1, lecture: i+1
+                                  })}
+
+													className="w-4 h-4 mt-1 cursor-pointer"
 													src={progressData && progressData.lectureCompleted.includes(lecture.lectureId) ? assets.blue_tick_icon : assets.play_icon}
 													alt="play_icon"
 												/>
