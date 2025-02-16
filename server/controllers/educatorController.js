@@ -150,8 +150,8 @@ export const educatorDashboardData = async(req,res) =>{
             status: 'completed'
         });
 
-        const totalEarnings = purchases.reduce((sum, purchase) => sum + purchase.amount, 0)
-
+        const totalEarnings =Math.round( purchases.reduce((sum, purchase) => sum + purchase.amount, 0)).toFixed(2)
+        
         // collect unique enrolled students ids with their course title
 
         const enrolledStudentsData = [];
