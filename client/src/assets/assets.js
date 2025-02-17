@@ -101,29 +101,34 @@ export const dummyEducatorData = {
     "__v": 0
 }
 
+
+
+
 export const dummyTestimonial = [
     {
-        name: 'Donald Jackman',
-        role: 'SWE 1 @ Amazon',
+        name: 'Sophia Carter',
+        role: 'Educator @ Udemy',
         image: assets.profile_img_1,
         rating: 5,
-        feedback: 'I\'ve been using Imagify for nearly two years, primarily for Instagram, and it has been incredibly user-friendly, making my work much easier.',
+        feedback: 'Edemy LMS has revolutionized my teaching experience. The platform is intuitive, making course creation and student engagement seamless.',
     },
     {
-        name: 'Richard Nelson',
-        role: 'SWE 2 @ Samsung',
+        name: 'Michael Thompson',
+        role: 'Student @ Harvard University',
         image: assets.profile_img_2,
-        rating: 4,
-        feedback: 'I\'ve been using Imagify for nearly two years, primarily for Instagram, and it has been incredibly user-friendly, making my work much easier.',
+        rating: 4.8,
+        feedback: 'Edemy LMS provides an exceptional learning environment. The structured courses, real-time tracking, and user-friendly interface are top-notch.',
     },
     {
-        name: 'James Washington',
-        role: 'SWE 2 @ Google',
+        name: 'Olivia Martinez',
+        role: 'Software Engineer @ Microsoft',
         image: assets.profile_img_3,
-        rating: 4.5,
-        feedback: 'I\'ve been using Imagify for nearly two years, primarily for Instagram, and it has been incredibly user-friendly, making my work much easier.',
+        rating: 4.7,
+        feedback: 'Edemy LMS is a fantastic platform for upskilling. Its diverse course library and smooth UI make learning highly effective and engaging.',
     },
 ];
+
+
 
 export const dummyDashboardData = {
     "totalEarnings": 707.38,
