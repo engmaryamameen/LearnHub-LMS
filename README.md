@@ -132,7 +132,8 @@ Edemy LMS is a full-stack learning management system (LMS) that provides educato
 | **My Courses** | ![My Courses](https://github.com/user-attachments/assets/e9f1b602-fc46-4dd7-8833-f1d8b15f43a1) |
 | **Enrolled Students** | ![Enrolled Students](https://github.com/user-attachments/assets/6d118429-4aa0-487e-ad6c-1f37af3f9968) |
 
-![image](https://github.com/user-attachments/assets/bc9435e9-9d9a-4f51-bfe4-27d349ce67fb)
+![image](https://github.com/user-attachments/assets/6eb66c29-6a73-4f98-9c15-7625a903a109)
+
 
 
 
