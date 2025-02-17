@@ -40,68 +40,69 @@ Edemy LMS is a full-stack learning management system (LMS) that provides educato
 ### **Frontend (`client/`)**
 ```
 📦 client
- ┣ 📂 src
- ┃ ┣ 📂 assets
- ┃ ┣ 📂 components
- ┃ ┃ ┣ 📂 educator
- ┃ ┃ ┃ ┣ Footer.jsx
- ┃ ┃ ┃ ┣ Navbar.jsx
- ┃ ┃ ┃ ┣ Sidebar.jsx
- ┃ ┃ ┣ 📂 student
- ┃ ┃ ┃ ┣ Logger.jsx
- ┃ ┣ 📂 context
- ┃ ┃ ┣ AppContext.jsx
- ┃ ┣ 📂 pages
- ┃ ┃ ┣ 📂 educator
- ┃ ┃ ┃ ┣ AddCourse.jsx
- ┃ ┃ ┃ ┣ Dashboard.jsx
- ┃ ┃ ┃ ┣ Educator.jsx
- ┃ ┃ ┃ ┣ MyCourses.jsx
- ┃ ┃ ┃ ┣ StudentsEnrolled.jsx
- ┃ ┃ ┣ 📂 student
- ┃ ┃ ┃ ┣ CourseDetails.jsx
- ┃ ┃ ┃ ┣ CoursesList.jsx
- ┃ ┃ ┃ ┣ Home.jsx
- ┃ ┃ ┃ ┣ MyEnrollMents.jsx
- ┃ ┃ ┃ ┣ Player.jsx
- ┃ ┃ ┣ App.jsx
- ┃ ┃ ┣ index.css
- ┃ ┃ ┣ main.jsx
- ┣ 📜 .env
- ┣ 📜 .gitignore
- ┣ 📜 package.json
- ┣ 📜 tailwind.config.js
- ┣ 📜 vite.config.js
+ ├── 📂 src
+ │   ├── 📂 assets
+ │   ├── 📂 components
+ │   │   ├── 📂 educator
+ │   │   │   ├── Footer.jsx
+ │   │   │   ├── Navbar.jsx
+ │   │   │   ├── Sidebar.jsx
+ │   │   ├── 📂 student
+ │   │   │   ├── Logger.jsx
+ │   ├── 📂 context
+ │   │   ├── AppContext.jsx
+ │   ├── 📂 pages
+ │   │   ├── 📂 educator
+ │   │   │   ├── AddCourse.jsx
+ │   │   │   ├── Dashboard.jsx
+ │   │   │   ├── Educator.jsx
+ │   │   │   ├── MyCourses.jsx
+ │   │   │   ├── StudentsEnrolled.jsx
+ │   │   ├── 📂 student
+ │   │   │   ├── CourseDetails.jsx
+ │   │   │   ├── CoursesList.jsx
+ │   │   │   ├── Home.jsx
+ │   │   │   ├── MyEnrollMents.jsx
+ │   │   │   ├── Player.jsx
+ │   │   ├── App.jsx
+ │   │   ├── index.css
+ │   │   ├── main.jsx
+ ├── 📜 .env
+ ├── 📜 .gitignore
+ ├── 📜 package.json
+ ├── 📜 tailwind.config.js
+ ├── 📜 vite.config.js
+
 ```
 
 ### **Backend (`server/`)**
 ```
 📦 server
- ┣ 📂 configs
- ┃ ┣ cloudinary.js
- ┃ ┣ mongodb.js
- ┃ ┣ multer.js
- ┣ 📂 controllers
- ┃ ┣ courseController.js
- ┃ ┣ educatorController.js
- ┃ ┣ userController.js
- ┃ ┣ webhooks.js
- ┣ 📂 middlewares
- ┃ ┣ authMiddleware.js
- ┣ 📂 models
- ┃ ┣ Course.js
- ┃ ┣ CourseProgress.js
- ┃ ┣ Purchase.js
- ┃ ┣ User.js
- ┣ 📂 routes
- ┃ ┣ courseRoute.js
- ┃ ┣ educatorRoutes.js
- ┃ ┣ userRoutes.js
- ┣ 📜 .env
- ┣ 📜 .gitignore
- ┣ 📜 package.json
- ┣ 📜 server.js
- ┣ 📜 vercel.json
+ ├── 📂 configs
+ │   ├── cloudinary.js
+ │   ├── mongodb.js
+ │   ├── multer.js
+ ├── 📂 controllers
+ │   ├── courseController.js
+ │   ├── educatorController.js
+ │   ├── userController.js
+ │   ├── webhooks.js
+ ├── 📂 middlewares
+ │   ├── authMiddleware.js
+ ├── 📂 models
+ │   ├── Course.js
+ │   ├── CourseProgress.js
+ │   ├── Purchase.js
+ │   ├── User.js
+ ├── 📂 routes
+ │   ├── courseRoute.js
+ │   ├── educatorRoutes.js
+ │   ├── userRoutes.js
+ ├── 📜 .env
+ ├── 📜 .gitignore
+ ├── 📜 package.json
+ ├── 📜 server.js
+ ├── 📜 vercel.json
 ```
 
 ---
