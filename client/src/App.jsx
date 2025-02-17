@@ -14,6 +14,8 @@ import StudentsEnrolled from './pages/educator/StudentsEnrolled'
 import Navbar from './components/student/Navbar'
 import "quill/dist/quill.snow.css";
 import { ToastContainer } from 'react-toastify';
+import About from './components/About'
+import ContactForm from './components/ContactForm'
 
 
 const App = () => {
@@ -36,6 +38,9 @@ const App = () => {
         <Route path='/my-enrollments' element={<MyEnrollMents/>} />
         <Route path='/player/:courseId' element={<Player/>} />
         <Route path='/loading/:path' element={<Loading/>} />
+
+        <Route path='/about' element={<About/>} />
+        <Route path='/contact' element={<ContactForm/>} />
 
 
         <Route path='/educator' element={ <Educator />} >
