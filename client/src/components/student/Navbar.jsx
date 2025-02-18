@@ -11,7 +11,7 @@ const Navbar = () => {
 
 
 	const isCourseListPage = location.pathname.includes("/course-list");
-	const {navigate, isEducator, backendUrl, setIsEducatore, getToken} = useContext(AppContext);
+	const {navigate, isEducator, backendUrl, setIsEducator, getToken} = useContext(AppContext);
 	const { openSignIn } = useClerk();
 	const { user } = useUser();
 
@@ -25,9 +25,10 @@ const Navbar = () => {
 			const token = await getToken();
 
 			const {data} = await axios.get(backendUrl + '/api/educator/update-role' , {headers: {Authorization: `Bearer ${token}`}})
-
+			console.log("educ", data);
+			
 			if(data.success){
-				setIsEducatore(true);
+				setIsEducator(true);
 				toast.success(data.message)
 			}else{
 				toast.error(data.message)
