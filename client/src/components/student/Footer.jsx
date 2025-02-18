@@ -21,7 +21,7 @@ const Footer = () => {
 			<div className="flex flex-col md:flex-row items-start px-8 md:px-0 justify-center gap-10 md:gap-32 py-10 border-b border-white/30">
 				<div className="flex flex-col md:items-start items-center w-full">
 					<img src={assets.logo_dark} alt="logo" />
-					<p className="mt-6 text-center md:text-left text-sm text-white/80">
+					<p className="mt-6 text-center sm:flex sm:flex-row sm:justify-center  md:text-left text-sm text-white/80">
 						Edemy LMS makes education accessible and engaging, connecting
 						students with educators through quality courses, interactive tools,
 						and intuitive design.
@@ -44,7 +44,7 @@ const Footer = () => {
 						</li>
 					</ul>
 				</div>
-				<div className="hidden md:flex flex-col items-start w-full">
+				<div className="md:flex flex-col items-start w-full">
 					<h2 className="font-semibold text-white mb-5">
 						Subscribe to our newsletter
 					</h2>
@@ -66,11 +66,14 @@ const Footer = () => {
 							Subscribe
 						</button>
 					</div>
+					<div className=" ml-8 mt-5 md:ml-0 md:mt-0">
+
 					<SocialIcons />
+					</div>
 				</div>
 			</div>
 			<p className="py-4 text-center text-xs md:text-sm text-white/60">
-				Copyright 2025 © Edemy. All Right Reserved.
+				Copyright 2025 © Edemy by GPS. All Right Reserved.
 			</p>
 		</footer>
 	);
