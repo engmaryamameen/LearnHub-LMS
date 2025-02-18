@@ -43,8 +43,11 @@ import profile_img2 from './profile_img2.png'
 import profile_img3 from './profile_img3.png'
 import lesson_icon from './lesson_icon.svg'
 
-
+import abhishek from './abhishek.JPG'
+import shreyansh from './shreyansh.JPG'
 export const assets = {
+    abhishek,
+    shreyansh,
     logo,
     search_icon,
     sketch,
@@ -107,15 +110,15 @@ export const dummyEducatorData = {
 export const dummyTestimonial = [
     {
         name: 'Sophia Carter',
-        role: 'Educator @ Udemy',
-        image: assets.profile_img_1,
+        role: 'Student @ AKTU',
+        image: assets.abhishek,
         rating: 5,
         feedback: 'Edemy LMS has revolutionized my teaching experience. The platform is intuitive, making course creation and student engagement seamless.',
     },
     {
-        name: 'Michael Thompson',
-        role: 'Student @ Harvard University',
-        image: assets.profile_img_2,
+        name: 'Shreyansh Dubey',
+        role: 'Student @ KNIT',
+        image: assets.shreyansh,
         rating: 4.8,
         feedback: 'Edemy LMS provides an exceptional learning environment. The structured courses, real-time tracking, and user-friendly interface are top-notch.',
     },
