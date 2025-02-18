@@ -16,7 +16,7 @@ const StudentsEnrolled = () => {
     try {
       const token = await getToken();
       const {data} = await axios.get(backendUrl + '/api/educator/enrolled-students', { headers: { Authorization: `Bearer ${token}` } })
-      console.log("data", data.enrolledStudents);
+      // console.log("data", data.enrolledStudents);
       
 
       if(data.success){
