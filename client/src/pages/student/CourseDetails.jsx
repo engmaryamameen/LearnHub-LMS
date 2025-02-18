@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { AppContext } from "../../context/AppContext";
 import Loading from "../../components/student/Loading";
 import { assets } from "../../assets/assets";
@@ -311,12 +311,26 @@ const CourseDetails = () => {
 							</div>
 						</div>
 
-						<button
-							onClick={enrollCourse}
-							className="md:mt-6 mt-4 w-full py-3 rounded  bg-blue-600 text-white font-medium"
+						<div
+							// onClick={enrollCourse}
+							
 						>
-							{isAlreadyEnrolled ? "Already Enrolled" : "Enroll Now"}
-						</button>
+							{isAlreadyEnrolled
+								? <p className="md:mt-6 mt-4 w-full py-3 rounded text-center  bg-blue-600 text-white font-medium"> Already Enrolled </p>
+								: courseData.coursePrice -
+										(courseData.discount * courseData.coursePrice) / 100 ===
+								  0.00
+								? <p className="md:mt-6 mt-4 w-full py-3 rounded text-center  bg-blue-600 text-white font-medium"> Free </p>
+								: <button onClick={enrollCourse} className="md:mt-6 mt-4 w-full py-3 rounded text-center  bg-blue-600 text-white font-medium"> Enroll Now</button>}
+						</div>
+
+						<div >
+							{courseData.coursePrice -
+								(courseData.discount * courseData.coursePrice) / 100 ===
+							0.00 ? (
+								<p className="md:mt-6 mt-4 w-full text-center py-3 rounded  bg-blue-600 text-white font-medium">Click on Course structure </p>
+							) : isAlreadyEnrolled ? <Link  to="/my-enrollments"><p className="md:mt-6 mt-4 w-full text-center py-3 rounded  bg-blue-600 text-white font-medium">My Enrollments</p> </Link> : ""}
+						</div>
 
 						<div className="pt-6">
 							<p className="md:text-xl text-lg font-medium text-gray-800">
