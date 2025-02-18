@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 import axios from "axios";
 import { data } from "react-router-dom";
 
+
+
 const MyEnrollMents = () => {
 	const {
 		navigate,
@@ -63,6 +65,7 @@ const MyEnrollMents = () => {
 
 	return (
 		<>
+		
 			<div className="md:px-36 px-8 pt-10">
 				<h1 className="text-2xl font-semibold">My EnrollMents</h1>
 				<table className="md:table-auto table-fixed w-full overflow-hidden border mt-10">
@@ -80,12 +83,13 @@ const MyEnrollMents = () => {
 							<tr className="border-b border-gray-500/20" key={index}>
 								<td className="md:px-4 pl-2 md:pl-4 py-3 flex items-center space-x-3 ">
 									<img
-										className="w-14 sm:w-24 md:w-28"
+										className="w-14 sm:w-24 md:w-28 cursor-pointer"
+										onClick={() => navigate("/player/" + course._id)}
 										src={course.courseThumbnail}
 										alt="courseThumbnail"
 									/>
-									<div className="flex-1">
-										<p className="mb-1 max-sm:text-sm">{course.courseTitle}</p>
+									<div className="flex-1 cursor-pointer" onClick={() => navigate("/player/" + course._id)}>
+										<p  className="mb-1 max-sm:text-sm">{course.courseTitle}</p>
 										<Line
 											strokeWidth={2}
 											percent={
