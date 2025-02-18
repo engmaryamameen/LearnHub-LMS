@@ -49,9 +49,9 @@ const Player = () => {
 	try {
 		const token = await getToken();
 		const {data} = await axios.post(backendUrl + '/api/user/update-course-progress',{courseId, lectureId}, {headers: {Authorization: `Bearer ${token}`}})
-		console.log("data palyer", data);
 		
-		if(data.sussess){
+		if(data.success){
+			// console.log("data palyer", data);
 			toast.success(data.message)
 			getCourseProgress()
 		}else{
@@ -72,6 +72,7 @@ const Player = () => {
 
 		if(data.success){
 			setProgressData(data.progressData)
+			toast.success(data.message)
 		}else{
 			toast.error(data.message)
 		}
