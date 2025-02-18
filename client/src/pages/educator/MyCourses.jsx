@@ -43,6 +43,7 @@ const MyCourses = () => {
             <thead className='text-gray-900 border-b border-gray-500/20 text-sm text-left'>
               <tr>
                 <th className='px-4 py-3 font-semibold truncate'>All Courses</th>
+                <th className='px-4 py-3 font-semibold truncate'>Courses Price</th>
                 <th className='px-4 py-3 font-semibold truncate'>Earnings</th>
                 <th className='px-4 py-3 font-semibold truncate'>Students</th>
                 <th className='px-4 py-3 font-semibold truncate'>Course Status</th>
@@ -62,7 +63,8 @@ const MyCourses = () => {
                      />
                      <span className="truncate hidden md:block">{course.courseTitle}</span>
                   </td>
-                  <td className="px-4 py-3">{currency} {Math.floor(course.enrolledStudents.length * (course.coursePrice = course.discount * course.coursePrice / 100))} </td>
+                  <td className="px-4 py-3">{(course.coursePrice - course.discount * course.coursePrice / 100) === 0 ? "" : "$"}   { (course.coursePrice - course.discount * course.coursePrice / 100) === 0 ? "Free" : (course.coursePrice - course.discount * course.coursePrice / 100) }  </td>
+                  <td className="px-4 py-3">{currency} {Math.floor(course.enrolledStudents.length * (course.coursePrice - course.discount * course.coursePrice / 100)).toFixed(2)} </td>
 
                   <td className='px-4 py-3'>{course.enrolledStudents.length}</td>
                   <td className='px-4 py-3'>
