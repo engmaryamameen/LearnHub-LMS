@@ -4,6 +4,7 @@ import { assets, dummyDashboardData } from "../../assets/assets";
 import Loading from "../../components/student/Loading";
 import { toast } from "react-toastify";
 import axios from "axios";
+import Logger from "../../components/Logger";
 
 const Dashboard = () => {
 
@@ -121,6 +122,9 @@ const Dashboard = () => {
 
 		<div className="min-h-screen flex flex-col items-start justify-between gap-8 md:p-8 md:pb-0 p-4 pt-8 pb-0">
   <div className="space-y-5 w-full">
+  <div className="block sm:hidden ">
+					<Logger/>
+			</div>
     {/* Responsive Grid for Cards */}
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-center w-full">
       <div className="flex items-center gap-3 shadow-card border border-blue-500 p-4 w-full rounded-md">
