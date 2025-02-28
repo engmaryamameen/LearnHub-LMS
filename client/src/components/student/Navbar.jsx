@@ -75,6 +75,7 @@ const Navbar = () => {
 			</div>
 			<div className="md:hidden flex items-center gap-2 sm:gap-5 text-gray-500">
 				{/* for phone scree  */}
+				
 				<div className="flex items-center gap-1 sm:gap-2 max-sm:text-xs">
         {user && (
 						<>
