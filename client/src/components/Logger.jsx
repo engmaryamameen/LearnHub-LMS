@@ -33,7 +33,7 @@ export default function Logger() {
 	return (
 		
         <div className="w-fit m-auto font-semibold gap-3 bg-gradient-to-b from-cyan-100/20 text-lg sm:text-xs p-3 sm:p-2 rounded-md shadow-md z-50">
-        Visitors: <span className="text-green-500"> {visitors} </span>
+        Visitors: <span className="text-green-500"> {12053 + visitors} </span>
       </div>
     //     <div className="w-fit m-auto  bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm sm:text-xs p-3 sm:p-2 rounded-md shadow-lg z-50">
     //     Visitors: {visitors}
