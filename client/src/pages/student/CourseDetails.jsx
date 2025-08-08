@@ -26,7 +26,8 @@ const CourseDetails = () => {
 		calculateNoOfLectures,
 		backendUrl,
 		userData,
-		getToken,
+		enrolledCourses,
+		getAccessToken,
 	} = useContext(AppContext);
 
 	const fetcheCourseData = async () => {
@@ -54,7 +55,7 @@ const CourseDetails = () => {
 				return toast.warn("Already Enrolled");
 			}
 
-			const token = await getToken();
+			const token = await getAccessToken();
 			const { data } = await axios.post(
 				backendUrl + "/api/user/purchase",
 				{ courseId: courseData._id },
@@ -77,10 +78,12 @@ const CourseDetails = () => {
 	}, []);
 
 	useEffect(() => {
-		if (userData && courseData) {
-			setIsAlreadyEnrolled(userData.enrolledCourses.includes(courseData._id));
+		if (enrolledCourses && courseData && Array.isArray(enrolledCourses)) {
+			setIsAlreadyEnrolled(enrolledCourses.some(course => course._id === courseData._id));
+		} else {
+			setIsAlreadyEnrolled(false);
 		}
-	}, [userData, courseData]);
+	}, [enrolledCourses, courseData]);
 
 	const toggleSection = (index) => {
 		setOpenSections((prev) => ({ ...prev, [index]: !prev[index] }));
@@ -133,7 +136,7 @@ const CourseDetails = () => {
 					<p className="text-sm">
 						Course by{" "}
 						<span className="text-blue-600 underline">
-							{courseData.educator.name}
+							{courseData.educator?.firstName || 'Unknown'} {courseData.educator?.lastName || 'Educator'}
 						</span>
 					</p>
 
@@ -247,6 +250,57 @@ const CourseDetails = () => {
 							}}
 						></p>
 					</div>
+
+					{/* Playlist Link Section - Only for enrolled students */}
+					{courseData.playlistLink && (
+						<div className="py-8 text-sm md:text-default">
+							<h3 className="text-xl font-semibold text-gray-800 mb-4">
+								Additional Resources
+							</h3>
+							{isAlreadyEnrolled ? (
+								<div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+									<div className="flex items-center gap-3">
+										<svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+											<path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+										</svg>
+										<div>
+											<p className="font-medium text-gray-800 mb-1">YouTube Playlist</p>
+											<p className="text-gray-600 text-sm mb-2">Access additional course content and resources</p>
+											<a 
+												href={courseData.playlistLink} 
+												target="_blank" 
+												rel="noopener noreferrer"
+												className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm"
+											>
+												<span>Watch Playlist</span>
+												<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+													<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+												</svg>
+											</a>
+										</div>
+									</div>
+								</div>
+							) : (
+								<div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+									<div className="flex items-center gap-3">
+										<svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
+											<path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+										</svg>
+										<div>
+											<p className="font-medium text-gray-600 mb-1">YouTube Playlist</p>
+											<p className="text-gray-500 text-sm mb-2">Enroll in this course to access additional resources</p>
+											<button 
+												onClick={enrollCourse}
+												className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm"
+											>
+												<span>Enroll to Access</span>
+											</button>
+										</div>
+									</div>
+								</div>
+							)}
+						</div>
+					)}
 				</div>
 
 				{/* right column */}

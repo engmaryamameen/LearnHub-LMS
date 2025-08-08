@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { assets } from '../../assets/assets'
 import { AppContext } from '../../context/AppContext'
 import Loading from '../../components/student/Loading'
 import axios from 'axios'
@@ -7,31 +8,37 @@ import Logger from '../../components/Logger'
 
 const MyCourses = () => {
 
-  const {currency, backendUrl, isEducator, getToken} = useContext(AppContext)
-  const [courses, setCourses] = useState(null)
+  const {currency, backendUrl, isEducator, getAccessToken} = useContext(AppContext)
+  const [courses, setCourses] = useState([])
 
 
 
 
-  const fetchEducatorCourses = async()=>{
-    // setCourses(allCourses)
-    try {
-      const token = await getToken();
-      const {data} = await axios.get(backendUrl + '/api/educator/courses', { headers: { Authorization: `Bearer ${token}` } })
-      // console.log("data", data.courses);
-      
+  const fetchCourses = async () => {
+      try {
+          const token = await getAccessToken();
+          if (!token) {
+              toast.error('Authentication required')
+              return
+          }
 
-      data.success && setCourses(data.courses)
-    } catch (error) {
-      toast.error(error.message)
-      console.log(error.message);
-      
-    }
+          const { data } = await axios.get(`${backendUrl}/api/educator/courses`, {
+              headers: { Authorization: `Bearer ${token}` }
+          })
+
+          if (data.success) {
+              setCourses(data.courses)
+          } else {
+              toast.error(data.message)
+          }
+      } catch (error) {
+          toast.error(error.message)
+      }
   }
 
   useEffect(()=>{
     if(isEducator){
-      fetchEducatorCourses();
+      fetchCourses();
     }
   },[isEducator])
 

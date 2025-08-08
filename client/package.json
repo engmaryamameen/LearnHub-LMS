@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@clerk/clerk-react": "^5.22.12",
     "@formspree/react": "^2.5.1",
+    "@supabase/supabase-js": "^2.53.0",
     "axios": "^1.7.9",
     "framer-motion": "^12.4.2",
     "humanize-duration": "^3.32.1",

@@ -1,15 +1,18 @@
-import { clerkClient } from "@clerk/express";
+import { supabase } from '../configs/supabase.js'
 
 // Middleware (protect educator route)
-
 export const protectEducator = async(req,res, next) => {
     try {
-        const userId = req.auth.userId
-        const response = await clerkClient.users.getUser(userId)
+        const userId = req.user.id // Using Supabase user ID
+        
+        // Get user from our database
+        const User = (await import('../models/User.js')).default
+        const user = await User.findOne({ supabaseId: userId })
 
-        if(response.publicMetadata.role !== 'educator'){
-            res.json({success: false, message:"Unauthorized Access!"})
+        if (!user || user.role !== 'educator') {
+            return res.json({success: false, message:"Unauthorized Access!"})
         }
+        
         next()
 
     } catch (error) {

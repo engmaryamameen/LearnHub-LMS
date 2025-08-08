@@ -1,110 +1,158 @@
-import React, { useContext, useEffect, useState } from "react";
-import { AppContext } from "../../context/AppContext";
-import { useParams } from "react-router-dom";
-import { assets } from "../../assets/assets";
-import  humanizeDuration  from "humanize-duration";
+import React, { useContext, useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { assets } from '../../assets/assets'
+import { AppContext } from '../../context/AppContext'
+import { toast } from 'react-toastify'
+import axios from 'axios'
+import Loading from '../../components/student/Loading'
+import Rating from '../../components/student/Rating'
 import YouTube from 'react-youtube'
-import Footer from "../../components/student/Footer";
-import Rating from "../../components/student/Rating";
-import axios from "axios";
-import { toast } from "react-toastify";
-import Loading from "../../components/student/Loading";
+import humanizeDuration from 'humanize-duration'
+import Footer from '../../components/student/Footer'
 
 const Player = () => {
+    const { courseId } = useParams()
+    const {enrolledCourses, calculateChapterTime, backendUrl, getAccessToken, userData, fetchUserEnrolledCourses} = useContext(AppContext)
+    const [courseData, setCourseData] = useState(null)
+    const [currentLecture, setCurrentLecture] = useState(null)
+    const [progressData, setProgressData] = useState(null)
+    const [openSections, setOpenSections] = useState({})
+    const [playerData, setPlayerData] = useState(null)
+    const [initialRating, setInitialRating] = useState(0)
 
-  const {enrolledCourses, calculateChapterTime, backendUrl, getToken, userData, fetchUserEnrolledCourses} = useContext(AppContext)
-  const {courseId} = useParams();
-  const [courseData, setCourseData] = useState(null)
-  const [openSections, setOpenSections] = useState({})
-  const [playerData, setPlayerData] = useState(null)
-  const [progressData, setProgressData] = useState(null)
-  const [initialRating, setInitialRating] = useState(0)
+    const fetchCourseData = async () => {
+        try {
+            const { data } = await axios.get(`${backendUrl}/api/course/${courseId}`)
+            if (data.success) {
+                setCourseData(data.courseData)
+                if (data.courseData.courseContent.length > 0 && data.courseData.courseContent[0].chapterContent.length > 0) {
+                    setCurrentLecture(data.courseData.courseContent[0].chapterContent[0])
+                }
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
 
+    const updateProgress = async (lectureId) => {
+        try {
+            const token = await getAccessToken();
+            if (!token) {
+                toast.error('Authentication required')
+                return
+            }
 
-  const getCourseData = () =>{
-    enrolledCourses.map((course)=>{
-      if(course._id === courseId)
-      {
-        setCourseData(course)
-		course.courseRatings.map((item)=>{
-			if(item.userId === userData._id){
-			setInitialRating(item.rating)
-			}
-		})
-      }
-    })
-  }
+            const { data } = await axios.post(`${backendUrl}/api/user/update-course-progress`, {
+                courseId,
+                lectureId
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
 
-  const toggleSection = (index) => {
-		setOpenSections((prev) => ({ ...prev, [index]: !prev[index] }));
-	};
+            if (data.success) {
+                fetchUserEnrolledCourses()
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
+    const getProgress = async () => {
+        try {
+            const token = await getAccessToken();
+            if (!token) {
+                toast.error('Authentication required')
+                return
+            }
+
+            const { data } = await axios.post(`${backendUrl}/api/user/get-course-progress`, {
+                courseId
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+
+            if (data.success) {
+                setProgressData(data.progressData)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
+    const addRating = async (rating) => {
+        try {
+            const token = await getAccessToken();
+            if (!token) {
+                toast.error('Authentication required')
+                return
+            }
+
+            const { data } = await axios.post(`${backendUrl}/api/user/add-rating`, {
+                courseId,
+                rating
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+
+            if (data.success) {
+                toast.success('Rating added successfully')
+                fetchCourseData()
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
+    const toggleSection = (index) => {
+        setOpenSections(prev => ({
+            ...prev,
+            [index]: !prev[index]
+        }))
+    }
+
+    const handleRate = (rating) => {
+        setInitialRating(rating)
+        addRating(rating)
+    }
+
+    const markLectureAsCompleted = async (lectureId) => {
+        try {
+            await updateProgress(lectureId)
+            await getProgress()
+        } catch (error) {
+            toast.error('Failed to mark lecture as completed')
+        }
+    }
+
 
   useEffect(()=>{
-	if(enrolledCourses.length > 0){
-		getCourseData()
-	}
-  },[enrolledCourses])
-
-  const markLectureAsCompleted = async (lectureId) => {
-	try {
-		const token = await getToken();
-		const {data} = await axios.post(backendUrl + '/api/user/update-course-progress',{courseId, lectureId}, {headers: {Authorization: `Bearer ${token}`}})
-		
-		if(data.success){
-			// console.log("data palyer", data);
-			toast.success(data.message)
-			getCourseProgress()
-		}else{
-			toast.error(data.message)
-		}
-	} catch (error) {
-		toast.error(error.message)
-	}
-  }
-
-
-  
-
-  const getCourseProgress = async () => {
-	try {
-		const token = await getToken();
-		const {data} = await axios.post(backendUrl + '/api/user/get-course-progress', {courseId}, {headers: {Authorization: `Bearer ${token}`}})
-
-		if(data.success){
-			setProgressData(data.progressData)
-			toast.success(data.message)
-		}else{
-			toast.error(data.message)
-		}
-	} catch (error) {
-		toast.error(error.message)
-	}
-  }
-
-  const handleRate = async (rating)=>{
-	try {
-		const token = await getToken();
-
-		const {data} = await axios.post(backendUrl + '/api/user/add-rating', {courseId, rating},{headers: {Authorization: `Bearer ${token}`}})
-		console.log("data", data);
-		
-		if(data.success){
-			toast.success(data.message)
-			fetchUserEnrolledCourses();
-		}
-		else{
-			toast.error(data.message)
-		}
-		
-	} catch (error) {
-		toast.error(error.message)
-	}
-  }
-
-
-  useEffect(()=>{
-	getCourseProgress();
+	fetchCourseData();
+	getProgress();
   },[])
+
+	// Check if user is enrolled in this course
+	const isEnrolled = enrolledCourses?.some(course => course._id === courseId)
+
+	if (!isEnrolled) {
+		return (
+			<div className="min-h-screen flex items-center justify-center bg-gray-50">
+				<div className="text-center">
+					<h1 className="text-2xl font-bold text-gray-900 mb-4">Access Denied</h1>
+					<p className="text-gray-600 mb-6">You need to enroll in this course to access its content.</p>
+					<button 
+						onClick={() => window.history.back()} 
+						className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+					>
+						Go Back
+					</button>
+				</div>
+			</div>
+		)
+	}
 
 	return courseData ? (
 		<>
@@ -200,7 +248,17 @@ const Player = () => {
 				<div className="md:mt-10">
           {playerData ? (
             <div className="">
-              <YouTube videoId={playerData.lectureUrl.split('/').pop()}  iframeClassName="w-full aspect-video"/>
+              <YouTube 
+                videoId={playerData.lectureUrl.split('/').pop()} 
+                iframeClassName="w-full aspect-video"
+                opts={{
+                  width: '100%',
+                  height: '100%',
+                  playerVars: {
+                    autoplay: 0,
+                  },
+                }}
+              />
               
               <div className="flex justify-between items-center mt-1">
                 <p>{playerData.chapter}.{playerData.lecture} {playerData.lectureTitle} </p>

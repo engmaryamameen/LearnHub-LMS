@@ -1,29 +1,33 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { dummyStudentEnrolled } from '../../assets/assets'
+import { assets } from '../../assets/assets'
 import Loading from '../../components/student/Loading'
 import { AppContext } from '../../context/AppContext'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import Logger from '../../components/Logger'
+import UserAvatar from '../../components/UserAvatar'
 
 const StudentsEnrolled = () => {
 
-  const {backendUrl, getToken, isEducator} = useContext(AppContext)
+  const {backendUrl, getAccessToken, isEducator} = useContext(AppContext)
 
-  const [enrolledStudents, setEnrolledStudents] = useState(null)
+  const [enrolledStudents, setEnrolledStudents] = useState([])
 
-  const fetchEnrolledStudents = async () =>{
-    // setEnrolledStudents(dummyStudentEnrolled);
+  const fetchEnrolledStudents = async () => {
     try {
-      const token = await getToken();
-      const {data} = await axios.get(backendUrl + '/api/educator/enrolled-students', { headers: { Authorization: `Bearer ${token}` } })
-      // console.log("data", data.enrolledStudents);
-      
-
-      if(data.success){
-        setEnrolledStudents(data.enrolledStudents.reverse())
+      const token = await getAccessToken();
+      if (!token) {
+        toast.error('Authentication required')
+        return
       }
-      else{
+
+      const { data } = await axios.get(`${backendUrl}/api/educator/enrolled-students`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+
+      if (data.success) {
+        setEnrolledStudents(data.enrolledStudents)
+      } else {
         toast.error(data.message)
       }
     } catch (error) {
@@ -62,12 +66,12 @@ const StudentsEnrolled = () => {
                     {index + 1}
                   </td>
                   <td className="md:px-4 px-2 py-3 flex items-center space-x-3">
-                    <img 
-                    src={item.student.imageUrl} 
-                    alt="image url"
-                    className="w-9 h-9 rounded-full"
-                     />
-                     <span className="truncate">{item.student.name}</span>
+                    <UserAvatar 
+                      src={item.student.imageUrl} 
+                      alt={`${item.student?.firstName || 'Unknown'} ${item.student?.lastName || 'Student'}`}
+                      className="w-9 h-9 rounded-full"
+                    />
+                    <span className="truncate">{item.student?.firstName || 'Unknown'} {item.student?.lastName || 'Student'}</span>
                   </td>
                   <td className="px-4 py-3 truncate">{item.courseTitle} </td>
                   <td className='px-4 py-3'>

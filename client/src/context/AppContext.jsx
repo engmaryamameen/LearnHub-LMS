@@ -1,21 +1,21 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { dummyCourses } from "../assets/assets";
 import { data, useNavigate } from "react-router-dom";
 import humanizeDuration from "humanize-duration"
-import {useAuth, useUser} from '@clerk/clerk-react'
+import { useAuth } from '@/context/AuthContext'
 import axios from 'axios'
 import {  toast } from 'react-toastify';
+import { supabase } from '@/config/supabase';
+
 export const AppContext = createContext()
 
 export const AppContextProvider = (props)=>{
 
-    const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
     const currency = import.meta.env.VITE_CURRENCY;
     const navigate = useNavigate();
 
-    const {getToken} = useAuth();
-    const {user} = useUser()
+    const { user } = useAuth();
 
     const [allCourses, setAllCourses] = useState([])
     const [isEducator, setIsEducator] = useState(false)
@@ -24,7 +24,6 @@ export const AppContextProvider = (props)=>{
 
     // fetch all courses 
     const fetchAllCourses = async ()=>{
-        // setAllCourses(dummyCourses)
         try {
             const {data} = await axios.get(backendUrl + '/api/course/all');
             if(data.success)
@@ -41,24 +40,45 @@ export const AppContextProvider = (props)=>{
 
     // fetch user data
     const fetchUserData = async ()=>{
-
-        if(user.publicMetadata.role === 'educator'){
-            setIsEducator(true);
-        }
+        if (!user) return;
 
         try {
-            const token = await getToken();
-
-            const {data} = await axios.get(backendUrl + '/api/user/data' , {headers: {Authorization: `Bearer ${token}`}})
+            // Get user profile from our database
+            const {data} = await axios.get(`${backendUrl}/api/user/profile/${user.id}`)
         
             if(data.success){
                 setUserData(data.user)
+                if(data.user.role === 'educator'){
+                    setIsEducator(true);
+                }
             }else{
                 toast.error(data.message)
             }
 
         } catch (error) {
-            toast.error(error.message)
+            console.error('Error fetching user data:', error)
+            // If user doesn't exist in our database, create them
+            if (error.response?.status === 404) {
+                try {
+                    const userData = {
+                        id: user.id,
+                        email: user.email,
+                        first_name: user.user_metadata?.first_name || '',
+                        last_name: user.user_metadata?.last_name || '',
+                        role: user.user_metadata?.role || 'student'
+                    }
+                    
+                    const response = await axios.post(`${backendUrl}/api/user/register`, userData)
+                    if (response.data.success) {
+                        setUserData(response.data.user)
+                        if (response.data.user.role === 'educator') {
+                            setIsEducator(true)
+                        }
+                    }
+                } catch (registerError) {
+                    console.error('Error registering user:', registerError)
+                }
+            }
         }
     }
 
@@ -103,37 +123,24 @@ export const AppContextProvider = (props)=>{
     }
 
     // Fetch user enrolled courses
-
-    // const fetchUserEnrolledCourses = async()=>{
-    //     // setEnrolledCourses(dummyCourses)
-    //    try {
-    //     const token = await getToken();
-
-    //     const data = await axios.get(backendUrl + '/api/user/enrolled-courses', {headers: {Authorization: `Bearer ${token}`}})
-        
-    //     console.log("Data",data);
-    //     if(data){
-    //         setEnrolledCourses(data.enrolledCourses.reverse());
-    //         // console.log("enroll", enrolledCourses);
-    //         // console.log("setenroll", enrolledCourses);
-            
-    //     }else{
-    //         toast.error(data.message)
-    //     }
-    //    } catch (error) {
-    //     toast.error(error.message)
-    //    }
-    // }
-
-
     const fetchUserEnrolledCourses = async () => {
+        if (!user) return;
+        
         try {
-            const token = await getToken();
-            const response = await axios.get(backendUrl + "/api/user/enrolled-courses", {
-                headers: { Authorization: `Bearer ${token}` }
+            // Get the current session to access the access token
+            const { data: { session } } = await supabase.auth.getSession()
+            const accessToken = session?.access_token
+            
+            if (!accessToken) {
+                console.log('No access token available')
+                return
+            }
+            
+            const response = await axios.get(`${backendUrl}/api/user/enrolled-courses`, {
+                headers: { 
+                    Authorization: `Bearer ${accessToken}` 
+                }
             });
-    
-            // console.log("Response:", response); // Debugging: Log full response
     
             if (response.data && response.data.enrolledCourses) {
                 setEnrolledCourses(response.data.enrolledCourses.reverse());
@@ -151,37 +158,46 @@ export const AppContextProvider = (props)=>{
     },[])
 
     useEffect(()=>{
-
-    },[])
-
-
-    // const logToken = async ()=>{
-    //     console.log(await getToken());
-        
-    // }
-
-    useEffect(()=>{
         if(user){
             fetchUserData()
-            // logToken()
             fetchUserEnrolledCourses()
         }
     },[user])
 
-    const value = {
-        currency,allCourses, navigate, isEducator, setIsEducator,
-        calculateRating,calculateChapterTime,calculateCourseDuration,calculateNoOfLectures
-        ,fetchUserEnrolledCourses, setEnrolledCourses,enrolledCourses,backendUrl, userData, setUserData, getToken, fetchAllCourses
-
+    // Helper function to get access token
+    const getAccessToken = async () => {
+        try {
+            const { data: { session } } = await supabase.auth.getSession()
+            return session?.access_token
+        } catch (error) {
+            console.error('Error getting access token:', error)
+            return null
+        }
     }
 
+    const value = {
+        currency,
+        allCourses, 
+        navigate, 
+        isEducator, 
+        setIsEducator,
+        calculateRating,
+        calculateChapterTime,
+        calculateCourseDuration,
+        calculateNoOfLectures,
+        fetchUserEnrolledCourses, 
+        setEnrolledCourses,
+        enrolledCourses,
+        backendUrl, 
+        userData, 
+        setUserData, 
+        fetchAllCourses,
+        getAccessToken
+    }
 
     return (
         <AppContext.Provider value={value} >
             {props.children}
         </AppContext.Provider>
     )
-
-    
-
 }

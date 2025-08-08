@@ -5,27 +5,30 @@ import Loading from "../../components/student/Loading";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Logger from "../../components/Logger";
+import UserAvatar from "../../components/UserAvatar";
 
 const Dashboard = () => {
 
 	
-	const { currency, backendUrl, getToken, isEducator } = useContext(AppContext);
+	const { currency, backendUrl, getAccessToken, isEducator } = useContext(AppContext);
 	const [dashboardData, setDashboardData] = useState(null);
 
 	const fetchDashboardData = async () => {
 		// setDashboardData(dummyDashboardData);
 		try {
-			const token = await getToken();
-
-			const {data} = await axios.get(backendUrl + '/api/educator/dashboard', { headers: { Authorization: `Bearer ${token}` } })
-
-			// console.log("dashboard data", data.dashboardData);
-
-			
-			if(data.success){
-				setDashboardData(data.dashboardData)
+			const token = await getAccessToken();
+			if (!token) {
+				toast.error('Authentication required')
+				return
 			}
-			else{
+
+			const { data } = await axios.get(`${backendUrl}/api/educator/dashboard`, {
+				headers: { Authorization: `Bearer ${token}` }
+			})
+
+			if (data.success) {
+				setDashboardData(data.dashboardData)
+			} else {
 				toast.error(data.message)
 			}
 		} catch (error) {
@@ -131,7 +134,7 @@ const Dashboard = () => {
         <img src={assets.patients_icon} alt="patients_icon" />
         <div>
           <p className="text-2xl font-medium text-gray-600">
-            {dashboardData.enrolledStudentsData.length}
+            {dashboardData.totalEnrollments || dashboardData.enrolledStudentsData.length}
           </p>
           <p className="text-base text-gray-500">Total Enrollments</p>
         </div>
@@ -179,12 +182,12 @@ const Dashboard = () => {
                     {index + 1}
                   </td>
                   <td className="md:px-4 px-2 py-3 flex items-center space-x-3">
-                    <img 
+                    <UserAvatar 
                       src={item.student.imageUrl} 
-                      alt="student"
+                      alt={`${item.student?.firstName || 'Unknown'} ${item.student?.lastName || 'Student'}`}
                       className="w-9 h-9 rounded-full"
                     />
-                    <span className="truncate">{item.student.name}</span>
+                    <span className="truncate">{item.student?.firstName || 'Unknown'} {item.student?.lastName || 'Student'}</span>
                   </td>
                   <td className="px-4 py-3 truncate">{item.courseTitle}</td>
                 </tr>

@@ -1,4 +1,3 @@
-import {clerkClient} from '@clerk/express'
 import Course from '../models/Course.js'
 import {v2 as cloudinary} from 'cloudinary'
 import { Purchase } from '../models/Purchase.js'
@@ -8,16 +7,20 @@ import User from '../models/User.js'
 // Update role to educator
 export const updateRoleToEducator = async (req,res)=>{
     try {
-        const userId = req.auth.userId
+        const userId = req.user.id // Using Supabase user ID
 
-        await clerkClient.users.updateUserMetadata(userId, {
-            publicMetadata:{
-                role: 'educator',
-            }
-        })
+        // Update user role in our database
+        const user = await User.findOneAndUpdate(
+            { supabaseId: userId },
+            { role: 'educator' },
+            { new: true }
+        )
+
+        if (!user) {
+            return res.json({success: false, message: 'User not found'})
+        }
 
         res.json({success: true, message: 'You can publish a course now'})
-
 
     } catch (error) {
         res.json({success: false, message:error.message})
@@ -54,9 +57,9 @@ export const addCourse = async (req, res) => {
     try {
         const { courseData } = req.body;
         const imageFile = req.file;
-        const educatorId = req.auth.userId;
+        const educatorId = req.user.id; // Using Supabase user ID
 
-        // console.log(educatorId);
+
 
         if (!imageFile) {
             return res.json({ success: false, message: "Thumbnail Not Attached" });
@@ -98,9 +101,9 @@ export const addCourse = async (req, res) => {
 export const getEducatorCourses = async(req,res) => {
     try {
         // const educator = req.auth
-        const educator = req.auth.userId
+        const educator = req.user.id // Using Supabase user ID
         const courses = await Course.find({educator})
-        // console.log(req.auth);
+
         res.json({success: true, courses})
         
     } catch (error) {
@@ -108,11 +111,11 @@ export const getEducatorCourses = async(req,res) => {
     }
 }
 
-// get educatore dashboard data (ttal earnings, enrolled students, No. of courses)
+// get educator dashboard data (total earnings, enrolled students, No. of courses)
 
 export const educatorDashboardData = async(req,res) =>{
     try {
-        const educator = req.auth.userId
+        const educator = req.user.id // Using Supabase user ID
 
         const courses = await Course.find({educator});
         const totalCourses = courses.length;
@@ -124,25 +127,33 @@ export const educatorDashboardData = async(req,res) =>{
             status: 'completed'
         });
 
-        const totalEarnings =Math.round( purchases.reduce((sum, purchase) => sum + purchase.amount, 0)).toFixed(2)
+        const totalEarnings = Math.round(purchases.reduce((sum, purchase) => sum + purchase.amount, 0) * 100) / 100;
         
         // collect unique enrolled students ids with their course title
-
         const enrolledStudentsData = [];
+        const uniqueStudentIds = new Set(); // To track unique students
+
         for(const course of courses){
             const students = await User.find({
-                _id: {$in: course.enrolledStudents}
-            }, 'name imageUrl')
+                supabaseId: {$in: course.enrolledStudents}
+            }, 'firstName lastName imageUrl supabaseId')
 
             students.forEach(student => {
+                uniqueStudentIds.add(student.supabaseId); // Track unique students
                 enrolledStudentsData.push({
                     courseTitle: course.courseTitle,
                     student
                 });
             });
         }
+
+        const totalEnrollments = uniqueStudentIds.size; // Count unique students
+
         res.json({success: true, dashboardData: {
-            totalEarnings,enrolledStudentsData, totalCourses
+            totalEarnings: totalEarnings.toFixed(2),
+            enrolledStudentsData, 
+            totalCourses,
+            totalEnrollments
         }})
     } catch (error) {
         res.json({success: false, message:error.message})    
@@ -156,20 +167,26 @@ export const educatorDashboardData = async(req,res) =>{
 
 export const getEnrolledStudentsData = async(req,res) =>{
     try {
-        const educator = req.auth.userId;
+        const educator = req.user.id; // Using Supabase user ID
         const courses = await Course.find({educator})
         const courseIds = courses.map(course => course._id)
 
         const purchases = await Purchase.find({
             courseId: {$in: courseIds},
             status: 'completed'
-        }).populate('userId', 'name imageUrl').populate('courseId', 'courseTitle')
+        }).populate('courseId', 'courseTitle')
 
-        const enrolledStudents = purchases.map(purchase => ({
-            student: purchase.userId,
-            courseTitle: purchase.courseId.courseTitle,
-            purchaseDate: purchase.createdAt
-        }));
+        // Get user details for each purchase
+        const enrolledStudents = await Promise.all(
+            purchases.map(async (purchase) => {
+                const user = await User.findOne({ supabaseId: purchase.userId }).select('firstName lastName imageUrl')
+                return {
+                    student: user || { firstName: 'Unknown', lastName: 'User', imageUrl: '' },
+                    courseTitle: purchase.courseId.courseTitle,
+                    purchaseDate: purchase.createdAt
+                }
+            })
+        )
 
         res.json({success: true, enrolledStudents});
 

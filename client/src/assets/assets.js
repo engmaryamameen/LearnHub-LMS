@@ -113,21 +113,21 @@ export const dummyTestimonial = [
         role: 'Student @ AKTU',
         image: assets.abhishek,
         rating: 5,
-        feedback: 'Edemy LMS has revolutionized my teaching experience. The platform is intuitive, making course creation and student engagement seamless.',
+        feedback: 'LearnHub LMS has revolutionized my teaching experience. The platform is intuitive, making course creation and student engagement seamless.',
     },
     {
         name: 'Shreyansh Dubey',
         role: 'Student @ KNIT',
         image: assets.shreyansh,
         rating: 4.8,
-        feedback: 'Edemy LMS provides an exceptional learning environment. The structured courses, real-time tracking, and user-friendly interface are top-notch.',
+        feedback: 'LearnHub LMS provides an exceptional learning environment. The structured courses, real-time tracking, and user-friendly interface are top-notch.',
     },
     {
         name: 'Olivia Martinez',
         role: 'Software Engineer @ Microsoft',
         image: assets.profile_img_3,
         rating: 4.7,
-        feedback: 'Edemy LMS is a fantastic platform for upskilling. Its diverse course library and smooth UI make learning highly effective and engaging.',
+        feedback: 'LearnHub LMS is a fantastic platform for upskilling. Its diverse course library and smooth UI make learning highly effective and engaging.',
     },
 ];
 
